@@ -22,4 +22,9 @@ public class MemberController {
         memberService.join(member);
         return "redirect:/"; // Redirect after registration
     }
+
+    @PostMapping("/findPassword")
+    public String findPassword(String userName) {
+        return "redirect:/"; // Redirect after registration
+    }
 }

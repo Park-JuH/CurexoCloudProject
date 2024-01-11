@@ -7,11 +7,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
     @GetMapping("/")
     public String home() {
-        return "mainpage"; // Name of the view (HTML or template) to be displayed
+        return "login"; // Name of the view (HTML or template) to be displayed
     }
 
     @GetMapping("/signup")
     public String signup() {
         return "signup"; // Refers to signup.html in the templates directory
+    }
+
+    @GetMapping("/forgotPassword")
+    public String forgotPassword() {
+        return "forgotPassword";
+    }
+
+    @GetMapping("mainPage")
+    public String mainPage() {
+        return "mainPage";
     }
 }

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .sidebar {
+      background-color: #f0f0f0;
+      padding: 10px;
+      height: 100vh;
+      width: 200px;
+      float: left;
+    }
+    .main-content {
+      margin-left: 200px;
+      padding: 20px;
+    }
+    .button {
+      display: block;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #ddd;
+      color: black;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+    .button.active, .button:hover {
+      background-color: #ccc;
+    }
+    .subpage {
+      display: none;
+    }
+    .subpage.active {
+      display: block;
+      background-color: #efefef;
+      padding: 15px;
+      border: 1px solid #ddd;
+      margin-top: 15px;
+    }
+    .action-button {
+      float: right;
+      margin: 10px;
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="button" onclick="showSubpage('original')">ORIGINAL</div>
+  <div class="button" onclick="showSubpage('segmentation')">SEGMENTATION</div>
+</div>
+
+<div class="main-content">
+  <div id="original" class="subpage">
+    <h2>ORIGINAL</h2>
+    <p>Articles or files included in ORIGINAL.</p>
+    <button class="action-button" onclick="upload()">UPLOAD</button>
+    <button class="action-button" onclick="create()">CREATE</button>
+  </div>
+
+  <div id="segmentation" class="subpage">
+    <h2>SEGMENTATION</h2>
+    <p>Articles or files included in SEGMENTATION.</p>
+    <button class="action-button" onclick="download()">DOWNLOAD</button>
+  </div>
+</div>
+
+<script>
+  function showSubpage(subpageId) {
+    // Remove active class from all buttons and subpages
+    document.querySelectorAll('.button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.subpage').forEach(page => page.classList.remove('active'));
+
+    // Add active class to the clicked button and the corresponding subpage
+    document.querySelector(`[onclick="showSubpage('${subpageId}')"]`).classList.add('active');
+    document.getElementById(subpageId).classList.add('active');
+  }
+
+  function upload() {
+    console.log("Upload functionality goes here.");
+  }
+
+  function create() {
+    console.log("Create functionality goes here.");
+  }
+
+  function download() {
+    console.log("Download functionality goes here.");
+  }
+</script>
+
+</body>
+</html>
