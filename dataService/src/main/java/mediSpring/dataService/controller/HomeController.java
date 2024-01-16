@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
     @GetMapping("/")
     public String home() {
+        System.out.println("HomeController.home");
         return "login"; // Name of the view (HTML or template) to be displayed
     }
 

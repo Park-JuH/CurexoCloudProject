@@ -3,6 +3,7 @@ package mediSpring.dataService.service;
 import mediSpring.dataService.domain.Member;
 import mediSpring.dataService.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,13 @@ public class MemberService {
 
     public Long join(Member member) {
         // You can add additional logic here (e.g., checking for duplicate members)
+        // Check for duplicate member name
+        if (memberRepository.findByName(member.getName()).isPresent()) {
+            // Handle the case where a member with the same name exists
+            // This could be throwing an exception or returning a specific value
+            return null;
+//            throw new DataIntegrityViolationException("A member with the name " + member.getName() + " already exists.");
+        }
         String encodedPassword = passwordEncoder.encode(member.getPwd());
         member.setPwd(encodedPassword);
         memberRepository.save(member);

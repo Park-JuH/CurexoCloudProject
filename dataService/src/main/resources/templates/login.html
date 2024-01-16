@@ -66,14 +66,14 @@
 <body>
 
 <div class="login-container">
-  <form th:action="@{/login}" method="post">
+  <form th:action="@{/members/login}" method="post">
     <h2>CUREXO</h2>
 
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" required>
+    <label for="name">Username</label>
+    <input type="text" id="name" name="name" required>
 
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required>
+    <label for="pwd">Password</label>
+    <input type="password" id="pwd" name="pwd" required>
 
     <div class="remember-me">
       <input type="checkbox" id="remember" name="remember">
