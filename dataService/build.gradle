@@ -24,6 +24,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'mysql:mysql-connector-java:8.0.28' // Use the latest version
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'commons-io:commons-io:2.8.0'
 }
 
 tasks.named('test') {
