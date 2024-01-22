@@ -19,10 +19,10 @@ public class FileController {
     public List<String> getOriginalFiles() {
         List<String> fileNames = new ArrayList<>();
         File folder = new File(uploadPath); // 폴더 경로 설정
-        System.out.println("FileController.getOriginalFiles");
-        System.out.println("folder = " + folder);
+//        System.out.println("FileController.getOriginalFiles");
+//        System.out.println("folder = " + folder);
         for (File file : folder.listFiles()) {
-            System.out.println("file = " + file);
+//            System.out.println("file = " + file);
             if (file.isFile()) {
                 fileNames.add(file.getName());
             }

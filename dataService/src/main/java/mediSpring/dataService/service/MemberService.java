@@ -24,16 +24,18 @@ public class MemberService {
     public Long join(Member member) {
         // You can add additional logic here (e.g., checking for duplicate members)
         // Check for duplicate member name
-        if (memberRepository.findByName(member.getName()).isPresent()) {
+        if (memberRepository.findByUsername(member.getUsername()).isPresent()) {
             // Handle the case where a member with the same name exists
             // This could be throwing an exception or returning a specific value
             return null;
 //            throw new DataIntegrityViolationException("A member with the name " + member.getName() + " already exists.");
         }
-        String encodedPassword = passwordEncoder.encode(member.getPwd());
-        member.setPwd(encodedPassword);
-        memberRepository.save(member);
-        return member.getId();
+        else {
+            String encodedPassword = passwordEncoder.encode(member.getPassword());
+            member.setPassword(encodedPassword);
+            memberRepository.save(member);
+            return member.getId();
+        }
     }
 
     private void validateDuplicateMember(Member member) {

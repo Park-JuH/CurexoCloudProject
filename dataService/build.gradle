@@ -25,6 +25,7 @@ dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.28' // Use the latest version
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'commons-io:commons-io:2.8.0'
+	implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.3.4.RELEASE'
 }
 
 tasks.named('test') {

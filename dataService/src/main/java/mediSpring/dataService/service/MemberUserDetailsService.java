@@ -20,14 +20,14 @@ public class MemberUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        Member member = (Member) memberRepository.findByName(name)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + name));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = (Member) memberRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
         System.out.println("MemberUserDetailsService.loadUserByUsername");
-        System.out.println("name = " + name);
-        return new org.springframework.security.core.userdetails.User(member.getName(),
-                member.getPwd(),
+        System.out.println("name = " + username);
+        return new org.springframework.security.core.userdetails.User(member.getUsername(),
+                member.getPassword(),
                 Collections.emptyList());
     }
 }
