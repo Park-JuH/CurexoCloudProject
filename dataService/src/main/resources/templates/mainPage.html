@@ -96,7 +96,10 @@
   <div id="original" class="subpage">
     <h2>ORIGINAL</h2>
     <ul id="originalFileList">
-      <li th:each="file : ${files}" th:text="${file}"></li>
+      <li th:each="file : ${files}">
+        <input type="checkbox" th:value="${file}" name="originalFiles">
+        <span th:text="${file}"></span>
+      </li>
     </ul>
     <p>Articles or files included in ORIGINAL.</p>
     <button class="action-button" onclick="openUploadModal()">UPLOAD</button>
@@ -105,8 +108,14 @@
 
   <div id="segmentation" class="subpage">
     <h2>SEGMENTATION</h2>
+    <ul id="segmentationFileList">
+      <li th:each="file : ${files}">
+        <input type="checkbox" th:value="${file}" name="segmentationFiles">
+        <span th:text="${file}"></span>
+      </li>
+    </ul>
     <p>Articles or files included in SEGMENTATION.</p>
-    <button class="action-button" onclick="download()">DOWNLOAD</button>
+    <button class="action-button" onclick="downloadSelectedFiles()">DOWNLOAD</button>
   </div>
 
   <div id="uploadModal" class="modal" style="display:none;">
@@ -121,15 +130,68 @@
 </div>
 
 <script>
+  function downloadSelectedFiles() {
+    const selectedFiles = document.querySelectorAll('input[type="checkbox"]:checked');
+    const fileNames = Array.from(selectedFiles).map(file => file.value);
+    fileNames.forEach(fileName => {
+      fetch('/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fileNames: [fileName] }) // 서버에 단일 파일 이름을 전송
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('전송 실패: ' + response.statusText);
+                }
+                return response.blob();
+              })
+              .then(blob => {
+                // Blob에서 URL을 생성하고 다운로드를 트리거합니다.
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName; // 파일 이름 설정
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+              })
+              .catch(error => console.error('다운로드 중 오류:', error));
+    });
+  }
+
   function showOriginalFiles() {
     fetch('/files/original')
             .then(response => response.json())
             .then(files => {
-              let fileListHtml = files.map(file => `<li>${file}</li>`).join('');
+              let fileListHtml = files.map(file =>
+                      `<li>
+                    <input type="checkbox" value="${file}" name="originalFiles">
+                    <span>${file}</span>
+                </li>`
+              ).join('');
               document.getElementById('originalFileList').innerHTML = fileListHtml;
-              showSubpage('original'); // 'ORIGINAL' 서브페이지를 활성화
+              // showSubpage('original'); // 'ORIGINAL' 서브페이지를 활성화
             });
   }
+
+  function showSegmentationFiles() {
+    fetch('/files/segmentation')
+            .then(response => response.json())
+            .then(files => {
+              let fileListHtml = files.map(file =>
+                      `<li>
+                    <input type="checkbox" value="${file}" name="segmentationFiles">
+                    <span>${file}</span>
+                </li>`
+              ).join('');
+              document.getElementById('segmentationFileList').innerHTML = fileListHtml;
+              // showSubpage('segmentation'); // 'SEGMENTATION' 서브페이지를 활성화
+            });
+  }
+
 
   function openUploadModal() {
     document.getElementById('uploadModal').style.display = 'block';
@@ -148,9 +210,23 @@
     // Add active class to the clicked button and the corresponding subpage
     document.querySelector(`[onclick="showSubpage('${subpageId}')"]`).classList.add('active');
     document.getElementById(subpageId).classList.add('active');
-
-    showOriginalFiles();
+    if (subpageId == "original") {
+      showOriginalFiles();
+    }
+    else if (subpageId == "segmentation") {
+      showSegmentationFiles();
+    }
   }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const showSubpageParam = urlParams.get('show');
+
+    if (showSubpageParam === 'original') {
+      showSubpage('original');
+    }
+  });
+
 
   function upload() {
     console.log("Upload functionality goes here.");

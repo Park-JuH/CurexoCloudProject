@@ -12,22 +12,41 @@ import java.util.List;
 @RestController
 public class FileController {
 
-    @Value("${upload-path}")
-    private String uploadPath;
+    @Value("${upload.path.original}")
+    private String originalUploadPath;
+
+    @Value("${upload.path.segmentation}")
+    private String segmentationUploadPath;
 
     @GetMapping("/files/original")
     public List<String> getOriginalFiles() {
-        List<String> fileNames = new ArrayList<>();
-        File folder = new File(uploadPath); // 폴더 경로 설정
+        List<String> orgfileNames = new ArrayList<>();
+        File folder = new File(originalUploadPath); // 폴더 경로 설정
 //        System.out.println("FileController.getOriginalFiles");
 //        System.out.println("folder = " + folder);
         for (File file : folder.listFiles()) {
 //            System.out.println("file = " + file);
             if (file.isFile()) {
-                fileNames.add(file.getName());
+                orgfileNames.add(file.getName());
             }
         }
 
-        return fileNames;
+        return orgfileNames;
+    }
+
+    @GetMapping("/files/segmentation")
+    public List<String> getSegmentationFiles() {
+        List<String> segfileNames = new ArrayList<>();
+        File folder = new File(segmentationUploadPath); // 폴더 경로 설정
+//        System.out.println("FileController.getOriginalFiles");
+//        System.out.println("folder = " + folder);
+        for (File file : folder.listFiles()) {
+//            System.out.println("file = " + file);
+            if (file.isFile()) {
+                segfileNames.add(file.getName());
+            }
+        }
+
+        return segfileNames;
     }
 }
