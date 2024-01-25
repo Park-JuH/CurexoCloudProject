@@ -103,7 +103,7 @@
     </ul>
     <p>Articles or files included in ORIGINAL.</p>
     <button class="action-button" onclick="openUploadModal()">UPLOAD</button>
-    <button class="action-button" onclick="create()">CREATE</button>
+    <button class="action-button" onclick="CreateSelectedFiles()">CREATE</button>
   </div>
 
   <div id="segmentation" class="subpage">
@@ -116,6 +116,7 @@
     </ul>
     <p>Articles or files included in SEGMENTATION.</p>
     <button class="action-button" onclick="downloadSelectedFiles()">DOWNLOAD</button>
+    <button class="action-button" onclick="viewSelectedFiles()">VIEW</button>
   </div>
 
   <div id="uploadModal" class="modal" style="display:none;">
@@ -130,6 +131,42 @@
 </div>
 
 <script>
+  function CreateSelectedFiles() {
+    const selectedFiles = document.querySelectorAll('input[type="checkbox"]:checked');
+    const fileNames = Array.from(selectedFiles).map(file => file.value);
+    fileNames.forEach(fileName => {
+      fetch('/api/segmentation/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fileNames: [fileName] }) // 서버에 단일 파일 이름을 전송
+
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Request failed with status: ' + response.statusText);
+                }
+                return response.text(); // or response.json() if response is in JSON format
+              })
+              .then(data => {
+                if (data === 'Success') {
+                  // Display a success message
+                  alert('Segmentation process completed successfully!');
+                  // Alternatively, you can use a more styled modal instead of alert
+                } else {
+                  // Handle other responses
+                  alert('Something went wrong: ' + data);
+                }
+              })
+              .catch(error => {
+                console.error('Error during segmentation:', error);
+                alert('Error during segmentation: ' + error.message);
+              });
+    });
+  }
+
+
   function downloadSelectedFiles() {
     const selectedFiles = document.querySelectorAll('input[type="checkbox"]:checked');
     const fileNames = Array.from(selectedFiles).map(file => file.value);
@@ -227,7 +264,9 @@
     }
   });
 
-
+  function viewSelectedFiles() {
+    console.log("View functionality goes here.");
+  }
   function upload() {
     console.log("Upload functionality goes here.");
   }
