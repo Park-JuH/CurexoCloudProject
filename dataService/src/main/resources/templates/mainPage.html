@@ -67,7 +67,7 @@
       margin: 15% auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 80%;
+      width: 60%;
     }
 
     .close {
@@ -83,6 +83,15 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    #viewImage {
+      /* Adjust width and height as needed */
+      max-width: 50%;  /* Maximum width, but can be smaller */
+      max-height: 50vh; /* Maximum height, but can be smaller */
+      height: auto;     /* Maintain aspect ratio */
+      width: auto;      /* Maintain aspect ratio */
+    }
+
   </style>
 </head>
 <body>
@@ -119,9 +128,17 @@
     <button class="action-button" onclick="viewSelectedFiles()">VIEW</button>
   </div>
 
+  <!-- Add a modal for image viewing -->
+  <div id="viewModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeViewModal()">×</span>
+      <img id="viewImage" src="" alt="Segmented Image" style="width:100%;"/>
+    </div>
+  </div>
+
   <div id="uploadModal" class="modal" style="display:none;">
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <span class="close"onclick="closeUploadModal()">&times;</span>
       <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
         <input type="file" name="file" />
         <input type="submit" value="업로드" />
@@ -131,6 +148,38 @@
 </div>
 
 <script>
+  function viewSelectedFiles() {
+    const selectedFiles = document.querySelectorAll('input[type="checkbox"]:checked');
+    if (selectedFiles.length === 0) {
+      alert("Please select a file to view.");
+      return;
+    }
+    if (selectedFiles.length > 1) {
+      alert("Please select only one file to view.");
+      return;
+    }
+    const fileName = selectedFiles[0].value;
+
+    fetch(`/api/images/view`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ fileName: fileName })
+    })
+            .then(response => response.blob())
+            .then(blob => {
+              const imageUrl = window.URL.createObjectURL(blob);
+              document.getElementById('viewImage').src = imageUrl;
+              document.getElementById('viewModal').style.display = 'block';
+            })
+            .catch(error => console.error('Error loading image:', error));
+  }
+
+  function closeViewModal() {
+    document.getElementById('viewModal').style.display = 'none';
+  }
+
   function CreateSelectedFiles() {
     const selectedFiles = document.querySelectorAll('input[type="checkbox"]:checked');
     const fileNames = Array.from(selectedFiles).map(file => file.value);
@@ -234,9 +283,9 @@
     document.getElementById('uploadModal').style.display = 'block';
   }
 
-  document.querySelector('.close').addEventListener('click', function() {
+  function closeUploadModal() {
     document.getElementById('uploadModal').style.display = 'none';
-  });
+  }
 
 
   function showSubpage(subpageId) {
@@ -264,9 +313,6 @@
     }
   });
 
-  function viewSelectedFiles() {
-    console.log("View functionality goes here.");
-  }
   function upload() {
     console.log("Upload functionality goes here.");
   }
