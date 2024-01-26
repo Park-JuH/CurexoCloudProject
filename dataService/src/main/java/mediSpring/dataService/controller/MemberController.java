@@ -1,6 +1,7 @@
 package mediSpring.dataService.controller;
 
 import mediSpring.dataService.domain.Member;
+import mediSpring.dataService.repository.MemberRepository;
 import mediSpring.dataService.service.MemberService;
 import mediSpring.dataService.security.SecurityConfig;
 //import mediSpring.dataService.service.MemberUserDetailsService;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/members")
 public class MemberController {
@@ -26,16 +29,18 @@ public class MemberController {
     private final MemberUserDetailsService memberUserDetailsService;
     private final PasswordEncoder passwordEncoder;
 
+    private final MemberRepository memberRepository;
     private final AuthenticationManager authenticationManager;
 
 
     //    RedirectAttributes redirectAttributes;
     @Autowired
-    public MemberController(MemberService memberService, MemberUserDetailsService memberUserDetailsService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public MemberController(MemberService memberService, MemberUserDetailsService memberUserDetailsService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, MemberRepository memberRepository) {
         this.memberService = memberService;
         this.memberUserDetailsService = memberUserDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.memberRepository = memberRepository;
     }
 
 
@@ -50,12 +55,24 @@ public class MemberController {
     }
 
     @PostMapping("/findPassword")
-    public String findPassword(String username) {
-        return "redirect:/"; // Redirect after registration
+    public String findPassword(String username, RedirectAttributes redirectAttributes) {
+        System.out.println("username = " + username);
+
+        Optional<Member> forgotMember = memberRepository.findByUsername(username);
+
+        if (forgotMember.isPresent()) {
+            // Initiate a password reset process instead of returning the password
+            // For example, send an email with a password reset link
+
+            redirectAttributes.addFlashAttribute("message", "Check E-mail.");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid Username.");
+        }
+        return "redirect:/forgotPassword";
     }
 
     @PostMapping("/login")
-    public String userLogin(Member member) {
+    public String userLogin(Member member, RedirectAttributes redirectAttributes) {
         System.out.println("MemberController.userLogin");
         System.out.println("member = " + member.getUsername());
         UserDetails userDetails = memberUserDetailsService.loadUserByUsername(member.getUsername());
@@ -68,15 +85,17 @@ public class MemberController {
                         new UsernamePasswordAuthenticationToken(member.getUsername(), member.getPassword())
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            // Here you can define what to do next after successful login
-            return "redirect:/mainPage";
+                return "redirect:/mainPage";
             } catch (AuthenticationException e) {
                 // 인증 예외 처리 (예: 잘못된 자격 증명)
+                System.out.println("e = " + e);
+                redirectAttributes.addFlashAttribute("errorMessage", "Error: Invalid information");
                 return "redirect:/"; // 오류와 함께 로그인 페이지로 리디렉션
             }
         } else {
             // Passwords do not match
-            System.out.println("Password does not match.");
+            System.out.println("Invalid Password");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: Invalid information");
             // Here you can define what to do in case of failed login
             return "redirect:/";
         }

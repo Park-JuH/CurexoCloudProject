@@ -22,8 +22,11 @@ public class ImageViewController {
     @Value("${upload.path.segmentation}")
     private String segmentationUploadPath;
 
-    @PostMapping("/view")
-    public ResponseEntity<Resource> viewImage(@RequestBody Map<String, String> requestData) throws MalformedURLException {
+    @Value("${upload.path.original}")
+    private String originalUploadPath;
+
+    @PostMapping("/segmentView")
+    public ResponseEntity<Resource> segmentViewImage(@RequestBody Map<String, String> requestData) throws MalformedURLException {
         String fileName = requestData.get("fileName");
         Path filePath = Paths.get(segmentationUploadPath, fileName);
         Resource fileResource = new UrlResource(filePath.toUri());
@@ -36,4 +39,20 @@ public class ImageViewController {
                 .contentType(MediaType.IMAGE_PNG) // or the appropriate media type
                 .body(fileResource);
     }
+
+    @PostMapping("/originalView")
+    public ResponseEntity<Resource> originalViewImage(@RequestBody Map<String, String> requestData) throws MalformedURLException {
+        String fileName = requestData.get("fileName");
+        Path filePath = Paths.get(originalUploadPath, fileName);
+        Resource fileResource = new UrlResource(filePath.toUri());
+
+        if (!fileResource.exists() || !fileResource.isReadable()) {
+            throw new RuntimeException("Unable to read the file: " + fileName);
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG) // or the appropriate media type
+                .body(fileResource);
+    }
+
 }

@@ -41,7 +41,7 @@
       margin-top: 15px;
     }
     .action-button {
-      float: right;
+      float: left;
       margin: 10px;
       padding: 5px 10px;
       background-color: #4CAF50;
@@ -113,6 +113,7 @@
     <p>Articles or files included in ORIGINAL.</p>
     <button class="action-button" onclick="openUploadModal()">UPLOAD</button>
     <button class="action-button" onclick="CreateSelectedFiles()">CREATE</button>
+    <button class="action-button" onclick="orgViewSelectedFiles()">VIEW</button>
   </div>
 
   <div id="segmentation" class="subpage">
@@ -125,14 +126,14 @@
     </ul>
     <p>Articles or files included in SEGMENTATION.</p>
     <button class="action-button" onclick="downloadSelectedFiles()">DOWNLOAD</button>
-    <button class="action-button" onclick="viewSelectedFiles()">VIEW</button>
+    <button class="action-button" onclick="segmentViewSelectedFiles()">VIEW</button>
   </div>
 
   <!-- Add a modal for image viewing -->
   <div id="viewModal" class="modal" style="display:none;">
     <div class="modal-content">
       <span class="close" onclick="closeViewModal()">×</span>
-      <img id="viewImage" src="" alt="Segmented Image" style="width:100%;"/>
+      <img id="viewImage" src="" alt="Image" style="width:100%;"/>
     </div>
   </div>
 
@@ -148,7 +149,7 @@
 </div>
 
 <script>
-  function viewSelectedFiles() {
+  function orgViewSelectedFiles() {
     const selectedFiles = document.querySelectorAll('input[type="checkbox"]:checked');
     if (selectedFiles.length === 0) {
       alert("Please select a file to view.");
@@ -160,7 +161,35 @@
     }
     const fileName = selectedFiles[0].value;
 
-    fetch(`/api/images/view`, {
+    fetch(`/api/images/originalView`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ fileName: fileName })
+    })
+            .then(response => response.blob())
+            .then(blob => {
+              const imageUrl = window.URL.createObjectURL(blob);
+              document.getElementById('viewImage').src = imageUrl;
+              document.getElementById('viewModal').style.display = 'block';
+            })
+            .catch(error => console.error('Error loading image:', error));
+  }
+
+  function segmentViewSelectedFiles() {
+    const selectedFiles = document.querySelectorAll('input[type="checkbox"]:checked');
+    if (selectedFiles.length === 0) {
+      alert("Please select a file to view.");
+      return;
+    }
+    if (selectedFiles.length > 1) {
+      alert("Please select only one file to view.");
+      return;
+    }
+    const fileName = selectedFiles[0].value;
+
+    fetch(`/api/images/segmentView`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

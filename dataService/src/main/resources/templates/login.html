@@ -70,10 +70,14 @@
     <h2>CUREXO</h2>
 
     <label for="username">Username</label>
-    <input type="text" id="username" name="username" required>
+    <input type="text" id="username" name="username" required/>
+
+    <div th:if="${errorMessage}" class="error">
+      <p th:text="${errorMessage}"></p>
+    </div>
 
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" required>
+    <input type="password" id="password" name="password" required/>
 
     <div class="remember-me">
       <input type="checkbox" id="remember" name="remember">

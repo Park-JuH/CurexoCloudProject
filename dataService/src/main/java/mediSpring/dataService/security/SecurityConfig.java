@@ -41,23 +41,13 @@ public class SecurityConfig{
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.csrf().disable();
-//        http.authorizeHttpRequests()
-//                .requestMatchers("/mainPage").authenticated()
-//                .anyRequest().permitAll()
-//                .and().formLogin().loginPage("/");
-//
-//        return http.build();
-//    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        System.out.println("SecurityConfig.filterChain");
         http
                 .csrf().disable()
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/signup", "/", "/members/join", "/members/login").permitAll()  // 로그인, 회원가입, 홈페이지 공개 접근 허용
+                        .requestMatchers("/signup", "/", "/members/login", "/forgotPassword", "/members/findPassword", "members/join").permitAll()  // 로그인, 회원가입, 홈페이지 공개 접근 허용
                         .requestMatchers("/mainPage").authenticated()  // /mainPage는 인증된 사용자만 접근 가능
                         .anyRequest().authenticated())  // 그 외 모든 요청은 인증 필요
                 .formLogin()
