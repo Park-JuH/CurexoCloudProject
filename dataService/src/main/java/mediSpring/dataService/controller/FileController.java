@@ -18,14 +18,13 @@ public class FileController {
     @Value("${upload.path.segmentation}")
     private String segmentationUploadPath;
 
+    //Show original files to list
     @GetMapping("/files/original")
     public List<String> getOriginalFiles() {
         List<String> orgfileNames = new ArrayList<>();
         File folder = new File(originalUploadPath); // 폴더 경로 설정
-//        System.out.println("FileController.getOriginalFiles");
-//        System.out.println("folder = " + folder);
+
         for (File file : folder.listFiles()) {
-//            System.out.println("file = " + file);
             if (file.isFile()) {
                 orgfileNames.add(file.getName());
             }
@@ -34,14 +33,12 @@ public class FileController {
         return orgfileNames;
     }
 
+    //Show segmentation files to list
     @GetMapping("/files/segmentation")
     public List<String> getSegmentationFiles() {
         List<String> segfileNames = new ArrayList<>();
-        File folder = new File(segmentationUploadPath); // 폴더 경로 설정
-//        System.out.println("FileController.getOriginalFiles");
-//        System.out.println("folder = " + folder);
+        File folder = new File(segmentationUploadPath);
         for (File file : folder.listFiles()) {
-//            System.out.println("file = " + file);
             if (file.isFile()) {
                 segfileNames.add(file.getName());
             }

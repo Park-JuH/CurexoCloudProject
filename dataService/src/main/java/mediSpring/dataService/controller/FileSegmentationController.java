@@ -22,6 +22,7 @@ public class FileSegmentationController {
         this.segmentationService = segmentationService;
     }
 
+    //Send selected fileName to segmentationService
     @PostMapping("/predict")
     public String predict(@RequestBody Map<String, List<String>> body) throws UnsupportedEncodingException, JsonProcessingException {
         List<String> fileNames = body.get("fileNames");

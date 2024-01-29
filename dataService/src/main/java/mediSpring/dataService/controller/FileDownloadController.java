@@ -24,22 +24,25 @@ public class FileDownloadController {
     @Value("${upload.path.segmentation}")
     private String segmentationUploadPath;
 
+    //Download selected files
     @PostMapping("/download")
     public ResponseEntity<InputStreamResource> downloadFiles(@RequestBody Map<String, List<String>> body, HttpServletResponse response) {
         List<String> fileNames = body.get("fileNames");
-//        System.out.println("FileDownloadController.downloadFiles");
-//        System.out.println("fileNames = " + fileNames);
 
         if (!fileNames.isEmpty()) {
+            //Only return one file
             String fileName = fileNames.get(0);
             File file = new File(segmentationUploadPath + fileName);
             System.out.println("file = " + file);
             if (file.exists()) {
                 try {
+                    //Encoded url prevent korean error, special character error, special symbol error
                     String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
 
                     InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
                     System.out.println("resource = " + resource);
+
+                    //Return responseEntity to client
                     return ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_OCTET_STREAM)
                             .header("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName)
